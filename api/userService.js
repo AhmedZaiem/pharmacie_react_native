@@ -19,7 +19,7 @@ const defaultUsers = [
     },
 ];
 
-const initializeUsers = async () => {
+export const initializeUsers = async () => {
     const existing = await getItem(USER_KEY);
 
     if (!existing) {
