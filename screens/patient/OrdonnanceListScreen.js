@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native"; 
 import { useOrdonnanceStore } from "../../store/ordonnanceStore";
+import { Button } from "react-native-web";
 
-export default function OrdonnanceListScreen() {
+export default function OrdonnanceListScreen({navigation}) {
     const { ordonnances, loadOrdonnances } = useOrdonnanceStore();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,14 +25,7 @@ export default function OrdonnanceListScreen() {
         fetchOrdonnances();
     }, [loadOrdonnances]);
 
-    if (loading) {
-        return (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                <Text>Loading ordonnances...</Text>
-            </View>
-        );
-    }
+    
 
     if (error) {
         return (
@@ -61,15 +55,9 @@ export default function OrdonnanceListScreen() {
                         <Text style={styles.ordonnanceId}>Ordonnance ID: {item.id}</Text>
                         <Text>Patient ID: {item.patientId}</Text>
                         <Text>Doctor ID: {item.medecinId}</Text>
-                        <Text>Date: {item.date}</Text>
-                        <Text style={styles.medicamentsTitle}>Medicaments:</Text>
-                        {item.medicaments.map((med, index) => (
-                            <View key={index} style={styles.medicamentItem}>
-                                <Text>• {med.idMedicament}</Text>
-                                <Text>  Quantity per day: {med.quantiteParJour}</Text>
-                                <Text>  Duration: {med.duree} days</Text>
-                            </View>
-                        ))}
+                        <Button title="Details" onPress={() =>navigation.navigate("OrdonnanceDetail",{
+                            item:item
+                        })} />
                     </View>
                 )}
             />
