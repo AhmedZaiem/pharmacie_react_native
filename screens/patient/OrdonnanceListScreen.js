@@ -1,0 +1,128 @@
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native"; 
+import { useOrdonnanceStore } from "../../store/ordonnanceStore";
+
+export default function OrdonnanceListScreen() {
+    const { ordonnances, loadOrdonnances } = useOrdonnanceStore();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchOrdonnances = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                await loadOrdonnances();
+            } catch (error) {
+                console.error("Failed to load ordonnances:", error);
+                setError("Failed to load ordonnances");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrdonnances();
+    }, [loadOrdonnances]);
+
+    if (loading) {
+        return (
+            <View style={styles.center}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text>Loading ordonnances...</Text>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.center}>
+                <Text style={styles.error}>{error}</Text>
+            </View>
+        );
+    }
+
+    if (!ordonnances || ordonnances.length === 0) {
+        return (
+            <View style={styles.center}>
+                <Text>No ordonnances found</Text>
+            </View>
+        );
+    }
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Ordonnance List</Text>
+
+            <FlatList
+                data={ordonnances}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <View style={styles.ordonnanceCard}>
+                        <Text style={styles.ordonnanceId}>Ordonnance ID: {item.id}</Text>
+                        <Text>Patient ID: {item.patientId}</Text>
+                        <Text>Doctor ID: {item.medecinId}</Text>
+                        <Text>Date: {item.date}</Text>
+                        <Text style={styles.medicamentsTitle}>Medicaments:</Text>
+                        {item.medicaments.map((med, index) => (
+                            <View key={index} style={styles.medicamentItem}>
+                                <Text>• {med.idMedicament}</Text>
+                                <Text>  Quantity per day: {med.quantiteParJour}</Text>
+                                <Text>  Duration: {med.duree} days</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
+            />
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#f5f5f5',
+    },
+    center: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    ordonnanceCard: {
+        backgroundColor: 'white',
+        padding: 16,
+        marginBottom: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    ordonnanceId: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    medicamentsTitle: {
+        fontWeight: 'bold',
+        marginTop: 8,
+        marginBottom: 4,
+    },
+    medicamentItem: {
+        marginLeft: 8,
+        marginBottom: 4,
+    },
+    error: {
+        color: 'red',
+        fontSize: 16,
+    },
+});

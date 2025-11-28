@@ -10,7 +10,7 @@ export default function AppNavigator() {
 
     return (
         <NavigationContainer>
-            {user ? (
+            {user === null ? (
                 <AuthNavigator />
             ) : user?.role === "patient" ? (
                 <PatientNavigator />

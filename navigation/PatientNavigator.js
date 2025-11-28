@@ -1,8 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OrdonnanceListScreen from "../screens/patient/OrdonnanceListScreen";
-import OrdonnanceDetailScreen from "../screens/patient/OrdonnanceDetailScreen";
-
+import { OrdonnanceDetailScreen } from "../screens/patient/OrdonnanceDetailScreen";
 const Stack = createNativeStackNavigator();
 
 export default function PatientNavigator() {
