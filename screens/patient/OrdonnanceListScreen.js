@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native"; 
 import { useOrdonnanceStore } from "../../store/ordonnanceStore";
-import { Button } from "react-native-web";
+import { Button } from "react-native";
 
 export default function OrdonnanceListScreen({navigation}) {
     const { ordonnances, loadOrdonnances } = useOrdonnanceStore();
