@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native"; 
+import { View, Text, FlatList, StyleSheet, Button} from "react-native";
 import { useOrdonnanceStore } from "../../store/ordonnanceStore";
-import { Button } from "react-native";
+import { useAuthStore } from "../../store/authStore";
 
-export default function OrdonnanceListScreen({navigation}) {
+export default function OrdonnanceListScreen({ navigation }) {
     const { ordonnances, loadOrdonnances } = useOrdonnanceStore();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuthStore();
+
+
 
     useEffect(() => {
         const fetchOrdonnances = async () => {
@@ -25,7 +28,7 @@ export default function OrdonnanceListScreen({navigation}) {
         fetchOrdonnances();
     }, [loadOrdonnances]);
 
-    
+
 
     if (error) {
         return (
@@ -46,20 +49,30 @@ export default function OrdonnanceListScreen({navigation}) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Ordonnance List</Text>
-
+            <Text>Patient ID: p{user.id}</Text>
+            <Button title="Voir les Commandes" onPress={() => navigation.navigate("Commandes")} />
             <FlatList
                 data={ordonnances}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.ordonnanceCard}>
-                        <Text style={styles.ordonnanceId}>Ordonnance ID: {item.id}</Text>
-                        <Text>Patient ID: {item.patientId}</Text>
-                        <Text>Doctor ID: {item.medecinId}</Text>
-                        <Button title="Details" onPress={() =>navigation.navigate("OrdonnanceDetail",{
-                            item:item
-                        })} />
-                    </View>
-                )}
+                renderItem={({ item }) => {
+                    if (`p${user.id}` === item.patientId) {
+                        return (
+                            <View style={styles.ordonnanceCard}>
+                                <Text style={styles.ordonnanceId}>Ordonnance ID: {item.id}</Text>
+                                <Text>Patient ID: {item.patientId}</Text>
+                                <Text>Doctor ID: {item.medecinId}</Text>
+                                <Button
+                                    title="Details"
+                                    onPress={() =>
+                                        navigation.navigate("OrdonnanceDetail", { item })
+                                    }
+                                />
+                            </View>
+                        );
+                    }
+                    return null;
+                }}
+
             />
         </View>
     );

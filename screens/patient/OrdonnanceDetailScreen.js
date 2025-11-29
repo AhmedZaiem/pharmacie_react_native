@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 
-export const OrdonnanceDetailScreen = ({ route }) => {
+export const OrdonnanceDetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
 
   return (
@@ -30,6 +30,9 @@ export const OrdonnanceDetailScreen = ({ route }) => {
             <Text style={styles.medicamentDetail}>Duration: {med.duree} days</Text>
           </View>
         ))}
+        <Button title="Creer Commande" onPress={() => navigation.navigate("CommandeCreate", {
+          item: item
+        })} />
       </View>
     </ScrollView>
   );
