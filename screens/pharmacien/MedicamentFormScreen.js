@@ -7,7 +7,9 @@ import Input from '../../components/common/Input';
 export default function MedicamentFormScreen({ navigation, route }) {
     const { addMedicament, updateMedicament } = useMedicamentStore();
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [dosage, setDosage] = useState('');
+    const [forme, setForme] = useState('');
+    const [qte, setQte] = useState('');
     const [price, setPrice] = useState('');
     const [loading, setLoading] = useState(false);
     const isEditing = route.params?.medicament;
@@ -15,8 +17,10 @@ export default function MedicamentFormScreen({ navigation, route }) {
     useEffect(() => {
         if (isEditing) {
             setName(isEditing.name || '');
-            setDescription(isEditing.description || '');
+            setDosage(isEditing.dosage || '');
+            setForme(isEditing.forme || '');
             setPrice(isEditing.price?.toString() || '');
+            setQte(isEditing.qte?.toString() || '');
         }
     }, [isEditing]);
 
@@ -31,8 +35,10 @@ export default function MedicamentFormScreen({ navigation, route }) {
             const medicament = {
                 id: isEditing ? isEditing.id : Date.now().toString(),
                 name,
-                description,
+                dosage,
+                forme,
                 price: parseFloat(price),
+                qte,
             };
 
             if (isEditing) {
@@ -60,15 +66,26 @@ export default function MedicamentFormScreen({ navigation, route }) {
                 onChangeText={setName}
             />
             <Input
-                placeholder="Description"
-                value={description}
-                onChangeText={setDescription}
+                placeholder="Dosage"
+                value={dosage}
+                onChangeText={setDosage}
                 multiline
+            />
+            <Input
+                placeholder="Forme"
+                value={forme}
+                onChangeText={setForme}
             />
             <Input
                 placeholder="Price"
                 value={price}
                 onChangeText={setPrice}
+                keyboardType="numeric"
+            />
+            <Input
+                placeholder="Qte"
+                value={qte}
+                onChangeText={setQte}
                 keyboardType="numeric"
             />
             <Button

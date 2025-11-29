@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, Button} from "react-native";
+import { View, Text, FlatList, StyleSheet, Button } from "react-native";
 import { useOrdonnanceStore } from "../../store/ordonnanceStore";
 import { useAuthStore } from "../../store/authStore";
 
@@ -7,7 +7,7 @@ export default function OrdonnanceListScreen({ navigation }) {
     const { ordonnances, loadOrdonnances } = useOrdonnanceStore();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { user } = useAuthStore();
+    const { user, logout } = useAuthStore();
 
 
 
@@ -28,7 +28,9 @@ export default function OrdonnanceListScreen({ navigation }) {
         fetchOrdonnances();
     }, [loadOrdonnances]);
 
-
+    const handleLogout = () => {
+        logout();
+    }
 
     if (error) {
         return (
@@ -51,7 +53,9 @@ export default function OrdonnanceListScreen({ navigation }) {
             <Text style={styles.title}>Ordonnance List</Text>
             <Text>Patient ID: p{user.id}</Text>
             <Button title="Voir les Commandes" onPress={() => navigation.navigate("Commandes")} />
+
             <FlatList
+                style={styles.listContainer}
                 data={ordonnances}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => {
@@ -72,9 +76,12 @@ export default function OrdonnanceListScreen({ navigation }) {
                     }
                     return null;
                 }}
-
             />
+            <View style={styles.logoutButton}>
+                <Button title="Logout" onPress={handleLogout} />
+            </View>
         </View>
+
     );
 }
 
@@ -125,5 +132,12 @@ const styles = StyleSheet.create({
     error: {
         color: 'red',
         fontSize: 16,
+    },
+    listContainer: {
+        flex: 1,
+        marginBottom: 16,
+    },
+    logoutButton: {
+        marginVertical: 8,
     },
 });

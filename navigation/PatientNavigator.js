@@ -32,6 +32,7 @@ export default function PatientNavigator() {
         name="Commandes"
         component={CommandeListScreen}
       />
+      
     </Stack.Navigator>
   );
 }
