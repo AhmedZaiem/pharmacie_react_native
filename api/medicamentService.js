@@ -1,8 +1,15 @@
 import { getItem, saveItem } from "./asyncStorage";
+import medicamentPresetList from "../data/medicamentPresetList.json";
+
 const MEDICAMENT_KEY = "medicaments";
 
 export const getMedicaments = async () => {
-    return (await getItem(MEDICAMENT_KEY)) || [];
+    const data = await getItem(MEDICAMENT_KEY);
+    if (!data || data.length === 0) {
+        await saveItem(MEDICAMENT_KEY, medicamentPresetList);
+        return medicamentPresetList;
+    }
+    return data;
 };
 
 export const addMedicament = async (medicament) => {
@@ -14,8 +21,7 @@ export const addMedicament = async (medicament) => {
 
 export const updateMedicament = async (id, updated) => {
     const meds = await getMedicaments();
-    const newList = meds.map((m) => (m.id === id ? { ...m, ...updated } :
-        m));
+    const newList = meds.map((m) => (m.id === id ? { ...m, ...updated } : m));
     await saveItem(MEDICAMENT_KEY, newList);
     return newList;
 };

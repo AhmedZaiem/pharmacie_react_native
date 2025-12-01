@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { useMedicamentStore } from '../../store/medicamentStore';
 
 export const OrdonnanceDetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
+  const { medicaments, loadMedicaments } = useMedicamentStore();
+
+  useEffect(() => {
+    loadMedicaments();
+  }, [loadMedicaments]);
 
   return (
     <ScrollView style={styles.container}>
@@ -23,13 +29,20 @@ export const OrdonnanceDetailScreen = ({ route, navigation }) => {
 
         <Text style={styles.medicamentsTitle}>Medicaments:</Text>
 
-        {item.medicaments.map((med, index) => (
-          <View key={index} style={styles.medicamentCard}>
-            <Text style={styles.medicamentItem}>• {med.idMedicament}</Text>
-            <Text style={styles.medicamentDetail}>Quantity per day: {med.quantiteParJour}</Text>
-            <Text style={styles.medicamentDetail}>Duration: {med.duree} days</Text>
-          </View>
-        ))}
+        {item.medicaments.map((med, index) => {
+          const medicamentDetails = medicaments.find(m => m.id == med.idMedicament);
+          return (
+            <View key={index} style={styles.medicamentCard}>
+              <Text style={styles.medicamentItem}>• {medicamentDetails ? medicamentDetails.name : `ID: ${med.idMedicament}`}</Text>
+              {medicamentDetails && <Text style={styles.medicamentDetail}>Dosage: {medicamentDetails.dosage}</Text>}
+              {medicamentDetails && <Text style={styles.medicamentDetail}>Forme: {medicamentDetails.forme}</Text>}
+              {medicamentDetails && <Text style={styles.medicamentDetail}>Price: {medicamentDetails.price} $</Text>}
+              {medicamentDetails && <Text style={styles.medicamentDetail}>Stock Qte: {medicamentDetails.qte}</Text>}
+              <Text style={styles.medicamentDetail}>Quantity per day: {med.quantiteParJour}</Text>
+              <Text style={styles.medicamentDetail}>Duration: {med.duree} days</Text>
+            </View>
+          );
+        })}
         <Button title="Creer Commande" onPress={() => navigation.navigate("CommandeCreate", {
           item: item
         })} />

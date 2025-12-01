@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 import { useCommandeStore } from '../../store/commandeStore';
 import { useAuthStore } from '../../store/authStore';
 
+
 export const CommandeListScreen = ({ navigation }) => {
   const { commandes, loadCommandes } = useCommandeStore();
   const { user, logout } = useAuthStore();
@@ -82,4 +83,9 @@ const styles = StyleSheet.create({
   logoutButton: {
     marginVertical: 8,
   },
+  Button : {
+    marginBottom : 10,
+    marginTop : 10,
+  },
+  
 });

@@ -15,7 +15,7 @@ const OrdonnanceItem = ({ ordonnance }) => {
             <Text style={styles.title}>Ordonnance ID: {ordonnance.id}</Text>
             <Text>Patient: {ordonnance.patientName}</Text>
             <Text>Medicaments: {ordonnance.medicaments.join(', ')}</Text>
-            <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+            <TouchableOpacity style={[styles.button, { marginVertical: 10 }]} onPress={handleUpdate}>
                 <Text style={styles.buttonText}>Update</Text>
             </TouchableOpacity>
         </View>

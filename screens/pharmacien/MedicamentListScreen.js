@@ -54,6 +54,9 @@ export default function MedicamentListScreen({ navigation }) {
                 <Text style={styles.name}>{item.name}</Text>
                 <Text style={styles.description}>{item.description}</Text>
                 <Text style={styles.price}>${item.price}</Text>
+                <Text style={styles.qte}>Qte: {item.qte}</Text>
+                <Text style={styles.dosage}>Dosage: {item.dosage}</Text>
+                <Text style={styles.forme}>Forme: {item.forme}</Text>
             </View>
             <TouchableOpacity
                 style={styles.deleteButton}
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#dc3545',
         padding: 8,
         borderRadius: 4,
+        marginVertical: 10,
     },
     deleteText: {
         color: '#fff',
@@ -136,5 +140,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#666',
         marginTop: 32,
+    },
+    qte: {
+        fontSize: 14,
+        color: '#333',
+        marginTop: 4,
+        fontWeight: '500',
+    },
+    dosage: {
+        fontSize: 14,
+        color: '#555',
+        marginTop: 2,
+    },
+    forme: {
+        fontSize: 14,
+        color: '#555',
+        fontStyle: 'italic',
+        marginTop: 2,
     },
 });

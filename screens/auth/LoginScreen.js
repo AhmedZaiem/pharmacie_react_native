@@ -68,12 +68,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+
   button: {
     backgroundColor: "#4a90e2",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
