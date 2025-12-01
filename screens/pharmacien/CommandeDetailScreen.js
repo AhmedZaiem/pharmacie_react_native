@@ -1,52 +1,69 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { useCommandeStore } from '../../store/commandeStore';
 
-export const CommandeDetailScreen = ({ route }) => {
+export const CommandeDetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
 
+  const handleUpdateStatus = async (id, status) => {
+    await useCommandeStore.getState().updateCommandeStatus(id, status);
+    navigation.goBack();
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.screen}>
-      <View style={styles.card}>
-        <Text style={styles.header}>Commande Details</Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.screen}>
+        <View style={styles.card}>
+          <Text style={styles.header}>Commande Details</Text>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Commande ID</Text>
-          <Text style={styles.value}>{item.id}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Commande ID</Text>
+            <Text style={styles.value}>{item.id}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Ordonnance ID</Text>
-          <Text style={styles.value}>{item.ordonnanceId}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Ordonnance ID</Text>
+            <Text style={styles.value}>{item.ordonnanceId}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Patient ID</Text>
-          <Text style={styles.value}>{item.patientId}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Patient ID</Text>
+            <Text style={styles.value}>{item.patientId}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Pharmacien ID</Text>
-          <Text style={styles.value}>{item.pharmacienID}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Pharmacien ID</Text>
+            <Text style={styles.value}>{item.pharmacienID}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Lieu de Livraison</Text>
-          <Text style={styles.value}>{item.lieuLivraison || 'N/A'}</Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Lieu de Livraison</Text>
+            <Text style={styles.value}>{item.lieuLivraison || 'N/A'}</Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Status</Text>
-          <Text style={[styles.value, item.status === 'pending' && styles.pending, item.status === 'done' && styles.done]}>
-            {item.status}
-          </Text>
-        </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Status</Text>
+            <Text style={[styles.value, item.status === 'pending' && styles.pending, item.status === 'done' && styles.done]}>
+              {item.status}
+            </Text>
+          </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Date Creation</Text>
-          <Text style={styles.value}>{new Date(item.dateCreation).toLocaleString()}</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Date Creation</Text>
+            <Text style={styles.value}>{new Date(item.dateCreation).toLocaleString()}</Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      {(item.status !== 'done' && item.status !== 'preparing') &&
+        <Button title="Mark as Preparing" onPress={() => handleUpdateStatus(item.id, 'preparing')} />
+      }
+      {(item.status === 'preparing') &&
+        <Button title="Mark as Done" onPress={() => handleUpdateStatus(item.id, 'done')} />
+      }
+
+
+    </View>
+
   );
 };
 
@@ -96,7 +113,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   pending: {
-    color: '#b45309', 
+    color: '#b45309',
     fontWeight: '700',
   },
   done: {
