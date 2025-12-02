@@ -1,106 +1,237 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export const CommandeDetailScreen = ({ route }) => {
   const { item } = route.params;
 
+  const getStatusInfo = (status) => {
+    switch(status) {
+      case 'pending':
+        return { color: '#F59E0B', icon: '⏳', label: 'En attente', bgColor: '#FEF3C7' };
+      case 'done':
+        return { color: '#10B981', icon: '✅', label: 'Terminée', bgColor: '#D1FAE5' };
+      case 'cancelled':
+        return { color: '#EF4444', icon: '❌', label: 'Annulée', bgColor: '#FEE2E2' };
+      default:
+        return { color: '#6B7280', icon: '📋', label: status, bgColor: '#F3F4F6' };
+    }
+  };
+
+  const statusInfo = getStatusInfo(item.status);
+  const formattedDate = new Date(item.dateCreation).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const DetailRow = ({ label, value, icon, isStatus = false }) => (
+    <View style={styles.row}>
+      <View style={styles.labelContainer}>
+        <Text style={styles.rowIcon}>{icon}</Text>
+        <Text style={styles.label}>{label}</Text>
+      </View>
+      <View style={[
+        styles.valueContainer,
+        isStatus && { backgroundColor: statusInfo.bgColor }
+      ]}>
+        <Text style={[
+          styles.value,
+          isStatus && { color: statusInfo.color, fontWeight: '700' }
+        ]}>
+          {isStatus ? `${statusInfo.icon} ${statusInfo.label}` : value}
+        </Text>
+      </View>
+    </View>
+  );
+
   return (
-    <ScrollView contentContainerStyle={styles.screen}>
-      <View style={styles.card}>
-        <Text style={styles.header}>Commande Details</Text>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Commande ID</Text>
-          <Text style={styles.value}>{item.id}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.screen}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Détails de la Commande</Text>
+          <Text style={styles.headerSubtitle}>ID: #{item.id}</Text>
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Ordonnance ID</Text>
-          <Text style={styles.value}>{item.ordonnanceId}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Informations Générales</Text>
+          
+          <DetailRow 
+            label="ID de l'Ordonnance" 
+            value={`#${item.ordonnanceId}`}
+            icon="📋"
+          />
+          
+          <DetailRow 
+            label="ID du Patient" 
+            value={`#${item.patientId}`}
+            icon="👤"
+          />
+          
+          <DetailRow 
+            label="ID du Pharmacien" 
+            value={`#${item.pharmacienID}`}
+            icon="💊"
+          />
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Patient ID</Text>
-          <Text style={styles.value}>{item.patientId}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Livraison</Text>
+          
+          <DetailRow 
+            label="Lieu de Livraison" 
+            value={item.lieuLivraison || 'Non spécifié'}
+            icon="📍"
+          />
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Pharmacien ID</Text>
-          <Text style={styles.value}>{item.pharmacienID}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Statut et Date</Text>
+          
+          <DetailRow 
+            label="Statut" 
+            value={item.status}
+            icon="📊"
+            isStatus={true}
+          />
+          
+          <View style={styles.dateRow}>
+            <View style={styles.labelContainer}>
+              <Text style={styles.rowIcon}>📅</Text>
+              <Text style={styles.label}>Date de Création</Text>
+            </View>
+            <Text style={styles.dateValue}>{formattedDate}</Text>
+          </View>
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Lieu de Livraison</Text>
-          <Text style={styles.value}>{item.lieuLivraison || 'N/A'}</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Status</Text>
-          <Text style={[styles.value, item.status === 'pending' && styles.pending, item.status === 'done' && styles.done]}>
-            {item.status}
+        <View style={styles.note}>
+          <Ionicons name="information-circle-outline" size={18} color="#3B82F6" />
+          <Text style={styles.noteText}>
+            Pour toute modification, contactez l'administration
           </Text>
         </View>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Date Creation</Text>
-          <Text style={styles.value}>{new Date(item.dateCreation).toLocaleString()}</Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default CommandeDetailScreen;
 
 const styles = StyleSheet.create({
-  screen: {
-    padding: 16,
-    backgroundColor: '#f5f7fb',
-    flexGrow: 1,
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
   },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 18,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#eef2f6',
+  screen: {
+    padding: 20,
+    paddingBottom: 30,
   },
   header: {
-    fontSize: 20,
+    marginBottom: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#E2E8F0',
+  },
+  headerTitle: {
+    fontSize: 24,
     fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 12,
+    color: '#1E293B',
     textAlign: 'center',
-  },
-  row: {
-    flexDirection: 'column',
-    marginBottom: 12,
-    paddingVertical: 6,
-    borderBottomColor: '#f0f3f7',
-    borderBottomWidth: 1,
-  },
-  label: {
-    fontSize: 13,
-    color: '#64748b',
-    fontWeight: '600',
     marginBottom: 4,
   },
-  value: {
-    fontSize: 16,
-    color: '#0f172a',
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
     fontWeight: '500',
   },
-  pending: {
-    color: '#b45309', 
-    fontWeight: '700',
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
-  done: {
-    color: '#065f46',
+  cardTitle: {
+    fontSize: 18,
     fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F8FAFC',
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  rowIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  label: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  valueContainer: {
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    minWidth: 120,
+    alignItems: 'flex-end',
+  },
+  value: {
+    fontSize: 15,
+    color: '#0F172A',
+    fontWeight: '600',
+    textAlign: 'right',
+  },
+  dateRow: {
+    paddingVertical: 12,
+  },
+  dateValue: {
+    fontSize: 14,
+    color: '#0F172A',
+    fontWeight: '600',
+    marginTop: 6,
+    textAlign: 'right',
+    lineHeight: 20,
+  },
+  note: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    padding: 16,
+    borderRadius: 10,
+    marginTop: 8,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  noteText: {
+    fontSize: 14,
+    color: '#1E40AF',
+    fontWeight: '500',
+    flex: 1,
   },
 });
