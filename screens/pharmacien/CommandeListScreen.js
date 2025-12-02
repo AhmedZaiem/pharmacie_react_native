@@ -18,17 +18,52 @@ export const CommandeListScreen = ({ navigation }) => {
     logout();
   }
 
-  const getStatusColor = (status) => {
+  const getStatusInfo = (status) => {
     switch (status) {
-      case 'pending': return '#F59E0B';
-      case 'done': return '#10B981';
-      case 'cancelled': return '#EF4444';
-      default: return '#6B7280';
+      case 'pending': 
+        return { 
+          color: '#F59E0B', 
+          bgColor: '#FEF3C7',
+          label: 'EN ATTENTE',
+          frenchLabel: 'En attente'
+        };
+      case 'done': 
+        return { 
+          color: '#10B981', 
+          bgColor: '#D1FAE5',
+          label: 'TERMINÉE',
+          frenchLabel: 'Terminée'
+        };
+      case 'cancelled': 
+        return { 
+          color: '#EF4444', 
+          bgColor: '#FEE2E2',
+          label: 'ANNULÉE',
+          frenchLabel: 'Annulée'
+        };
+      case 'preparing':
+        return { 
+          color: '#3B82F6', 
+          bgColor: '#DBEAFE',
+          label: 'EN PRÉPARATION',
+          frenchLabel: 'En préparation'
+        };
+      default: 
+        return { 
+          color: '#6B7280', 
+          bgColor: '#F3F4F6',
+          label: status.toUpperCase(),
+          frenchLabel: status.charAt(0).toUpperCase() + status.slice(1)
+        };
     }
   };
 
+  const getStatusColor = (status) => {
+    return getStatusInfo(status).color;
+  };
+
   const formatStatus = (status) => {
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    return getStatusInfo(status).frenchLabel;
   };
 
   return (
@@ -48,40 +83,65 @@ export const CommandeListScreen = ({ navigation }) => {
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {commandes.filter(commande => 
           String(user.id) === String(commande.pharmacienID)
-        ).map((commande) => (
-          <TouchableOpacity
-            key={commande.id}
-            style={styles.commandeCard}
-            onPress={() => navigation.navigate("CommandeDetail", { item: commande })}
-            activeOpacity={0.9}
-          >
-            <View style={styles.cardHeader}>
-              <Text style={styles.commandeId}>Commande #{commande.id}</Text>
-              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(commande.status) + '20' }]}>
-                <Text style={[styles.statusText, { color: getStatusColor(commande.status) }]}>
-                  {formatStatus(commande.status)}
-                </Text>
+        ).map((commande) => {
+          const statusInfo = getStatusInfo(commande.status);
+          
+          return (
+            <TouchableOpacity
+              key={commande.id}
+              style={styles.commandeCard}
+              onPress={() => navigation.navigate("CommandeDetail", { item: commande })}
+              activeOpacity={0.9}
+            >
+              <View style={styles.cardHeader}>
+                <View>
+                  <Text style={styles.commandeId}>Commande #{commande.id}</Text>
+                  <Text style={styles.commandeSubtitle}>Ordonnance #{commande.ordonnanceId}</Text>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: statusInfo.bgColor }]}>
+                  <View style={[styles.statusDot, { backgroundColor: statusInfo.color }]} />
+                  <Text style={[styles.statusText, { color: statusInfo.color }]}>
+                    {statusInfo.label}
+                  </Text>
+                </View>
               </View>
-            </View>
-            
-            <View style={styles.cardInfo}>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Ordonnance:</Text>
-                <Text style={styles.infoValue}>#{commande.ordonnanceId}</Text>
+              
+              <View style={styles.cardInfo}>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Patient:</Text>
+                  <Text style={styles.infoValue}>#{commande.patientId}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Date création:</Text>
+                  <Text style={styles.infoValue}>
+                    {new Date(commande.dateCreation).toLocaleDateString('fr-FR', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric'
+                    })}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.infoLabel}>Livraison:</Text>
+                  <Text style={styles.infoValue}>
+                    {commande.lieuLivraison || 'À préciser'}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Date:</Text>
-                <Text style={styles.infoValue}>
-                  {new Date(commande.dateCreation).toLocaleDateString('fr-FR')}
-                </Text>
+              
+              <View style={styles.cardFooter}>
+                <View style={styles.footerContent}>
+                  <View style={styles.statusNote}>
+                    <Text style={[styles.statusNoteText, { color: statusInfo.color }]}>
+                      {statusInfo.frenchLabel}
+                    </Text>
+                  </View>
+                  <Text style={styles.viewDetailsText}>Voir détails →</Text>
+                </View>
               </View>
-            </View>
-            
-            <View style={styles.cardFooter}>
-              <Text style={styles.viewDetailsText}>Appuyer pour voir les détails →</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       <TouchableOpacity 
@@ -154,52 +214,89 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 12,
   },
   commandeId: {
     fontSize: 18,
     fontWeight: '700',
     color: '#1E293B',
+    marginBottom: 2,
+  },
+  commandeSubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '500',
   },
   statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 6,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   statusText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 10,
+    fontWeight: '800',
     letterSpacing: 0.5,
   },
   cardInfo: {
     marginBottom: 12,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    alignItems: 'center',
+    paddingVertical: 6,
   },
   infoLabel: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#64748B',
     fontWeight: '500',
   },
   infoValue: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#0F172A',
     fontWeight: '600',
+    textAlign: 'right',
+    flexShrink: 1,
+    marginLeft: 8,
   },
   cardFooter: {
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: 12,
+    paddingTop: 8,
+  },
+  footerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statusNote: {
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  statusNoteText: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
   viewDetailsText: {
     color: '#3B82F6',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'right',
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   logoutButton: {
     backgroundColor: '#FEF2F2',
