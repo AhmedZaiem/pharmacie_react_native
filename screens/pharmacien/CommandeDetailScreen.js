@@ -1,9 +1,15 @@
 import React from 'react';
+<<<<<<< HEAD
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+=======
+import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { useCommandeStore } from '../../store/commandeStore';
+>>>>>>> 32d55bd7f215f60cd654d67e50413730b93145a0
 
-export const CommandeDetailScreen = ({ route }) => {
+export const CommandeDetailScreen = ({ route, navigation }) => {
   const { item } = route.params;
 
+<<<<<<< HEAD
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending': return '#F59E0B';
@@ -127,6 +133,67 @@ export const CommandeDetailScreen = ({ route }) => {
         </View>
       </ScrollView>
     </SafeAreaView>
+=======
+  const handleUpdateStatus = async (id, status) => {
+    await useCommandeStore.getState().updateCommandeStatus(id, status);
+    navigation.goBack();
+  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.screen}>
+        <View style={styles.card}>
+          <Text style={styles.header}>Commande Details</Text>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Commande ID</Text>
+            <Text style={styles.value}>{item.id}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Ordonnance ID</Text>
+            <Text style={styles.value}>{item.ordonnanceId}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Patient ID</Text>
+            <Text style={styles.value}>{item.patientId}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Pharmacien ID</Text>
+            <Text style={styles.value}>{item.pharmacienID}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Lieu de Livraison</Text>
+            <Text style={styles.value}>{item.lieuLivraison || 'N/A'}</Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Status</Text>
+            <Text style={[styles.value, item.status === 'pending' && styles.pending, item.status === 'done' && styles.done]}>
+              {item.status}
+            </Text>
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Date Creation</Text>
+            <Text style={styles.value}>{new Date(item.dateCreation).toLocaleString()}</Text>
+          </View>
+        </View>
+      </ScrollView>
+      {(item.status !== 'done' && item.status !== 'preparing') &&
+        <Button title="Mark as Preparing" onPress={() => handleUpdateStatus(item.id, 'preparing')} />
+      }
+      {(item.status === 'preparing') &&
+        <Button title="Mark as Done" onPress={() => handleUpdateStatus(item.id, 'done')} />
+      }
+
+
+    </View>
+
+>>>>>>> 32d55bd7f215f60cd654d67e50413730b93145a0
   );
 };
 
@@ -236,6 +303,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     marginLeft: 8,
   },
+<<<<<<< HEAD
   naValue: {
     color: '#94A3B8',
     fontStyle: 'italic',
@@ -262,6 +330,10 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
+=======
+  pending: {
+    color: '#b45309',
+>>>>>>> 32d55bd7f215f60cd654d67e50413730b93145a0
     fontWeight: '700',
     letterSpacing: 0.5,
   },
