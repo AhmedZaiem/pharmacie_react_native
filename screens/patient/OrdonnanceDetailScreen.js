@@ -142,13 +142,6 @@ export const OrdonnanceDetailScreen = ({ route, navigation }) => {
           <Ionicons name="cart" size={20} color="#FFFFFF" />
           <Text style={styles.createButtonText}>Créer une Commande</Text>
         </TouchableOpacity>
-
-        <View style={styles.note}>
-          <Ionicons name="information-circle-outline" size={18} color="#3B82F6" />
-          <Text style={styles.noteText}>
-            Tous les médicaments seront inclus dans la commande
-          </Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

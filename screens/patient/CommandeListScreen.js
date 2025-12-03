@@ -20,6 +20,7 @@ export const CommandeListScreen = ({ navigation }) => {
       case 'pending': return '#F59E0B';
       case 'done': return '#10B981';
       case 'cancelled': return '#EF4444';
+      case 'preparing': return '#6B7280';
       default: return '#6B7280';
     }
   };
@@ -28,6 +29,7 @@ export const CommandeListScreen = ({ navigation }) => {
     const statusMap = {
       'pending': 'En attente',
       'done': 'Terminée',
+      'preparing' : 'préparation',
       'cancelled': 'Annulée'
     };
     return statusMap[status] || status;

@@ -98,12 +98,7 @@ export const CommandeListScreen = ({ navigation }) => {
                   <Text style={styles.commandeId}>Commande #{commande.id}</Text>
                   <Text style={styles.commandeSubtitle}>Ordonnance #{commande.ordonnanceId}</Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: statusInfo.bgColor }]}>
-                  <View style={[styles.statusDot, { backgroundColor: statusInfo.color }]} />
-                  <Text style={[styles.statusText, { color: statusInfo.color }]}>
-                    {statusInfo.label}
-                  </Text>
-                </View>
+                
               </View>
               
               <View style={styles.cardInfo}>
