@@ -3,6 +3,14 @@ import { getUsers } from "../api/userService";
 
 export const useAuthStore = create((set) => ({
     user: null,
+
+    loadUser: async () => {
+        const savedUser = await getItem("loggedUser");
+        if (savedUser) {
+            set({ user: savedUser });
+        }
+    },
+    
     login: async (email, password) => {
         const users = await getUsers();
         const found = users.find(

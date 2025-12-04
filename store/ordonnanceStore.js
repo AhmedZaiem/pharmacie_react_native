@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getOrdonnances, addOrdonnance, updateOrdonnance } from "../api/ordonnanceService";
+import { getOrdonnances, addOrdonnance, updateOrdonnance, deleteOrdonnance } from "../api/ordonnanceService";
 
 export const useOrdonnanceStore = create((set) => ({
     
@@ -14,6 +14,10 @@ export const useOrdonnanceStore = create((set) => ({
     },
     updateOrdonnance: async (id, updated) => {
         const newList = await updateOrdonnance(id, updated);
+        set({ ordonnances: newList });
+    },
+    deleteOrdonnance: async (id) => {
+        const newList = await deleteOrdonnance(id);
         set({ ordonnances: newList });
     }
 }));

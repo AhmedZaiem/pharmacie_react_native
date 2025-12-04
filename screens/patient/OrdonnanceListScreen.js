@@ -119,7 +119,7 @@ export default function OrdonnanceListScreen({ navigation }) {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Mes Ordonnances</Text>
-                <Text style={styles.subtitle}>Patient ID: p{user.id}</Text>
+                <Text style={styles.subtitle}>Patient Name: {user.name}</Text>
             </View>
 
             <TouchableOpacity

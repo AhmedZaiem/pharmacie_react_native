@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'rea
 import { Picker } from '@react-native-picker/picker';
 import { getUsers } from '../../api/userService';
 import { useCommandeStore } from '../../store/commandeStore';
+import { useOrdonnanceStore } from '../../store/ordonnanceStore';
 import Input from '../../components/common/Input';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function CommandeCreateScreen({ route, navigation }) {
     const { item } = route.params;
     const { addCommande } = useCommandeStore();
+    const {deleteOrdonnance} = useOrdonnanceStore();
 
     const [loading, setLoading] = useState(false);
     const [pharmaciens, setPharmaciens] = useState([]);
@@ -53,6 +55,7 @@ export default function CommandeCreateScreen({ route, navigation }) {
 
         try {
             await addCommande(newCommande);
+            await deleteOrdonnance(item.id);
             Alert.alert('Succès', 'Commande créée avec succès');
             navigation.goBack();
         } catch (error) {
